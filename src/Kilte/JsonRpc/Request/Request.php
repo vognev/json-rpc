@@ -29,7 +29,7 @@ class Request
      * If it is not included it is assumed to be a notification.
      * The value SHOULD normally not be Null and Numbers SHOULD NOT contain fractional parts.
      *
-     * @var string|int|null
+     * @var string|int|null|boolean
      */
     private $id;
 
@@ -53,9 +53,10 @@ class Request
     /**
      * Constructor
      *
-     * @param string          $method Name of the method to be invoked
-     * @param array           $params The parameter values to be used during the invocation of the method
-     * @param string|int|null $id     An identifier established by the Client
+     * @param string                  $method Name of the method to be invoked
+     * @param array                   $params The parameter values to be used during the invocation of the method
+     * @param string|int|null|boolean $id     An identifier established by the Client
+     *                                        (If false given, then it is a notification)
      *
      * @return self
      */
@@ -96,7 +97,7 @@ class Request
     /**
      * Returns ID
      *
-     * @return int|null|string
+     * @return int|null|string|boolean
      */
     public function getId()
     {
