@@ -7,7 +7,7 @@
  * @package JsonRpc
  */
 
-namespace Kilte\JsonRpc\Tests\Response;
+namespace Kilte\JsonRpc\Tests\Response\Json;
 
 use Kilte\JsonRpc\Exception\InternalException;
 use Kilte\JsonRpc\Response\Json\ErrorResponse;
@@ -15,7 +15,7 @@ use Kilte\JsonRpc\Response\Json\ErrorResponse;
 /**
  * Class ErrorResponseTest
  *
- * @package Kilte\JsonRpc\Tests\Response
+ * @package Kilte\JsonRpc\Tests\Response\Json
  */
 class ErrorResponseTest extends \PHPUnit_Framework_TestCase
 {

@@ -7,14 +7,14 @@
  * @package JsonRpc
  */
 
-namespace Kilte\JsonRpc\Tests\Response;
+namespace Kilte\JsonRpc\Tests\Response\Json;
 
 use Kilte\JsonRpc\Response\Json\SuccessResponse;
 
 /**
  * Class SuccessResponseTest
  *
- * @package Kilte\JsonRpc\Tests\Response
+ * @package Kilte\JsonRpc\Tests\Response\Json
  */
 class SuccessResponseTest extends \PHPUnit_Framework_TestCase
 {
