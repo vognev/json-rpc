@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Part of the JsonRpc
+ *
+ * @author  Kilte Leichnam <nwotnbm@gmail.com>
+ * @package JsonRpc
+ */
+
 namespace Kilte\JsonRpc\Tests\Response;
 
 use Kilte\JsonRpc\Response\HttpResponse;
