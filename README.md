@@ -11,6 +11,7 @@
 ```php
 use Acme\UserApplication;
 use Kilte\JsonRpc\Application;
+use Kilte\JsonRpc\Server;
 use Kilte\JsonRpc\Request\IOStreamFactory;
 use Kilte\JsonRpc\Response\ResponseFactory;
 
