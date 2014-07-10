@@ -34,28 +34,15 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      *
      * @return Server
      */
-    private function makeServer($app)
+    private function makeServer($app, $stream)
     {
         $app = new Application($app);
+        $requestFactory = new IOStreamFactory();
+        $requestFactory->setStream($stream);
         $responseFactory = new ResponseFactory();
         $responseFactory->add('http', '\\Kilte\\JsonRpc\\Response\\HttpResponse');
 
-        return new Server($app, $responseFactory, 'http');
-    }
-
-    /**
-     * Returns request factory
-     *
-     * @param mixed $stream Stream
-     *
-     * @return IOStreamFactory
-     */
-    private function makeRequestFactory($stream)
-    {
-        $requestFactory = new IOStreamFactory();
-        $requestFactory->setStream($stream);
-
-        return $requestFactory;
+        return new Server($app, $requestFactory, $responseFactory, 'http');
     }
 
     /**
@@ -67,9 +54,9 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $app['method'] = function ($arg) {
             return sprintf('Argument value is %s', $arg);
         };
-        $server = $this->makeServer($app);
+        $server = $this->makeServer($app, __DIR__ . '/Fixtures/stream.json');
         ob_start();
-        $server->handle($this->makeRequestFactory(__DIR__ . '/Fixtures/stream.json'));
+        $server->handle();
         $actualResponse = ob_get_clean();
         $expectedResponse = (new SuccessResponse('id', 'Argument value is arg'))->jsonify();
         $this->assertEquals($expectedResponse, $actualResponse);
@@ -80,9 +67,9 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testHandleErrorResponseWhileHandlingRequest()
     {
-        $server = $this->makeServer([]);
+        $server = $this->makeServer([], __DIR__ . '/Fixtures/invalid_json.txt');
         ob_start();
-        $server->handle($this->makeRequestFactory(__DIR__ . '/Fixtures/invalid_json.txt'));
+        $server->handle();
         $actualResponse = ob_get_clean();
         $expectedResponse = (new ErrorResponse(null, new ParseException()))->jsonify();
         $this->assertEquals($expectedResponse, $actualResponse);
@@ -93,9 +80,9 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testHandleErrorResponseMethodNotFound()
     {
-        $server = $this->makeServer([]);
+        $server = $this->makeServer([], __DIR__ . '/Fixtures/stream.json');
         ob_start();
-        $server->handle($this->makeRequestFactory(__DIR__ . '/Fixtures/stream.json'));
+        $server->handle();
         $actualResponse = ob_get_clean();
         $e = new MethodNotFoundException("Method \"method\" does not exists");
         $expectedResponse = (new ErrorResponse('id', $e))->jsonify();
@@ -111,9 +98,9 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $app['method'] = function ($arg) {
             throw new InternalException($arg);
         };
-        $server = $this->makeServer($app);
+        $server = $this->makeServer($app, __DIR__ . '/Fixtures/stream.json');
         ob_start();
-        $server->handle($this->makeRequestFactory(__DIR__ . '/Fixtures/stream.json'));
+        $server->handle();
         $actualResponse = ob_get_clean();
         $expectedResponse = (new ErrorResponse('id', new InternalException('arg')))->jsonify();
         $this->assertEquals($expectedResponse, $actualResponse);
@@ -128,9 +115,9 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $app['method'] = function ($arg) {
             throw new \Exception($arg);
         };
-        $server = $this->makeServer($app);
+        $server = $this->makeServer($app, __DIR__ . '/Fixtures/stream.json');
         ob_start();
-        $server->handle($this->makeRequestFactory(__DIR__ . '/Fixtures/stream.json'));
+        $server->handle();
         $actualResponse = ob_get_clean();
         $expectedResponse = (new ErrorResponse('id', new InternalException('arg')))->jsonify();
         $this->assertEquals($expectedResponse, $actualResponse);

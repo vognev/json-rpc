@@ -31,6 +31,11 @@ class Server
     private $app;
 
     /**
+     * @var AbstractFactory Request factory
+     */
+    private $requestFactory;
+
+    /**
      * @var ResponseFactory Response factory
      */
     private $responseFactory;
@@ -44,29 +49,33 @@ class Server
      * Constructor
      *
      * @param Application     $app             An application instance
+     * @param AbstractFactory $requestFactory  Request factory
      * @param ResponseFactory $responseFactory Response factory
      * @param string          $responseType    Type of response
      *
      * @return self
      */
-    public function __construct(Application $app, ResponseFactory $responseFactory, $responseType)
-    {
+    public function __construct(
+        Application $app,
+        AbstractFactory $requestFactory,
+        ResponseFactory $responseFactory,
+        $responseType
+    ) {
         $this->app = $app;
+        $this->requestFactory = $requestFactory;
         $this->responseFactory = $responseFactory;
         $this->responseType = $responseType;
     }
 
     /**
-     * Handles a request and sens a response
-     *
-     * @param AbstractFactory $requestFactory Request factory
+     * Handles a request and sends a response
      *
      * @return void
      */
-    public function handle(AbstractFactory $requestFactory)
+    public function handle()
     {
         try {
-            $request = $requestFactory->forge();
+            $request = $this->requestFactory->forge();
         } catch (JsonRpcException $e) {
             $response = new ErrorResponse(null, $e);
         }
