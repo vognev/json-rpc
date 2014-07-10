@@ -18,7 +18,7 @@ use Kilte\JsonRpc\Exception\InvalidParamsException;
  *
  * @package Kilte\JsonRpc
  */
-class Application extends \ArrayObject
+class Application
 {
 
     /**
