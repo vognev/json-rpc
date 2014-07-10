@@ -11,4 +11,14 @@
             <directory>./src/Kilte/JsonRpc/Tests</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <filter>
+            <whitelist>
+                <directory>src/Kilte/JsonRpc</directory>
+                <exclude>
+                    <directory>src/Kilte/JsonRpc/Tests</directory>
+                </exclude>
+            </whitelist>
+        </filter>
+    </filter>
 </phpunit>
