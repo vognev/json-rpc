@@ -10,6 +10,7 @@
 namespace Kilte\JsonRpc\Tests;
 
 use Kilte\JsonRpc\Application;
+use Kilte\JsonRpc\Tests\Fixtures\UserApplication;
 
 /**
  * Class ApplicationTest
@@ -70,6 +71,14 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
             -32602
         );
         $this->getApp()->greet();
+    }
+
+
+    public function testCallFromObject()
+    {
+        /** @var $app object */
+        $app = new Application(new UserApplication());
+        $this->assertEquals($app->greet('kilte'), 'hello, kilte');
     }
 
 }

@@ -56,7 +56,7 @@ class AbstractFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testForgeFailedWithInvalidRequestException()
     {
-        $factory = $this->getFactory(json_encode(['request' => 'invalid_request']));
+        $factory = $this->getFactory(json_encode(['params' => 'could not be string', 'jsonrpc' => 'invalid_version']));
         $this->setExpectedException(
             '\\Kilte\\JsonRpc\\Exception\\InvalidRequestException',
             'The JSON sent is not a valid Request object.',

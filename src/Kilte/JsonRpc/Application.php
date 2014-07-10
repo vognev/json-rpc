@@ -60,12 +60,10 @@ class Application
      */
     private function reflectionFactory($method)
     {
-        if ($method instanceof \Closure) {
-            $r = new \ReflectionFunction($method);
-        } elseif (is_array($method) && sizeof($method) == 2) {
+        if (is_array($method) && sizeof($method) == 2) {
             $r = new \ReflectionMethod(get_class($method[0]), $method[1]);
         } else {
-            $r = false;
+            $r = new \ReflectionFunction($method);
         }
 
         return $r;
@@ -93,9 +91,6 @@ class Application
             throw new \BadMethodCallException(sprintf('Method "%s" does not exists', $name));
         }
         $r = $this->reflectionFactory($method);
-        if ($r === false) {
-            throw new \BadMethodCallException(sprintf('Method %s is not callable', $name));
-        }
         if ($total < $r->getNumberOfRequiredParameters() || $total > $r->getNumberOfParameters()) {
             throw new InvalidParamsException();
         }
