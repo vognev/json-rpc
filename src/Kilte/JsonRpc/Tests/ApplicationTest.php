@@ -73,7 +73,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->getApp()->greet();
     }
 
-
     public function testCallFromObject()
     {
         /** @var $app object */

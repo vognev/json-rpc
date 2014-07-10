@@ -16,8 +16,8 @@ use Kilte\JsonRpc\Response\Json\AbstractResponse;
  *
  * @package Kilte\JsonRpc\Response
  */
-class HttpResponse implements ResponseInterface {
-
+class HttpResponse implements ResponseInterface
+{
     /**
      * @var AbstractResponse
      */
