@@ -70,7 +70,7 @@ abstract class AbstractFactory
         if (!$this->validateRequest($request)) {
             throw new InvalidRequestException();
         }
-        foreach (['id' => null, 'params' => []] as $notRequired => $value) {
+        foreach (['id' => false, 'params' => []] as $notRequired => $value) {
             $request[$notRequired] = array_key_exists($notRequired, $request) ? $request[$notRequired] : $value;
         }
 
