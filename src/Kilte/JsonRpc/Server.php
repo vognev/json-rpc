@@ -17,7 +17,7 @@ use Kilte\JsonRpc\Request\Request;
 use Kilte\JsonRpc\Response\Json\AbstractResponse;
 use Kilte\JsonRpc\Response\Json\ErrorResponse;
 use Kilte\JsonRpc\Response\Json\SuccessResponse;
-use Kilte\JsonRpc\Response\ResponseFactory;
+use Kilte\JsonRpc\Response\ResponseInterface;
 
 /**
  * Class Server
@@ -38,35 +38,24 @@ class Server
     private $requestFactory;
 
     /**
-     * @var ResponseFactory Response factory
+     * @var ResponseInterface Response
      */
-    private $responseFactory;
-
-    /**
-     * @var string Response type
-     */
-    private $responseType;
+    private $response;
 
     /**
      * Constructor
      *
-     * @param Application     $app             An application instance
-     * @param AbstractFactory $requestFactory  Request factory
-     * @param ResponseFactory $responseFactory Response factory
-     * @param string          $responseType    Type of response
+     * @param Application       $app            An application instance
+     * @param AbstractFactory   $requestFactory Request factory
+     * @param ResponseInterface $response       Response
      *
      * @return self
      */
-    public function __construct(
-        Application $app,
-        AbstractFactory $requestFactory,
-        ResponseFactory $responseFactory,
-        $responseType
-    ) {
+    public function __construct(Application $app, AbstractFactory $requestFactory, ResponseInterface $response)
+    {
         $this->app = $app;
         $this->requestFactory = $requestFactory;
-        $this->responseFactory = $responseFactory;
-        $this->responseType = $responseType;
+        $this->response = $response;
     }
 
     /**
@@ -122,7 +111,7 @@ class Server
                 );
                 $output = sprintf('[%s]', implode(',', $responses));
             }
-            $this->responseFactory->create($this->responseType)->send($output);
+            $this->response->send($output);
         }
     }
 

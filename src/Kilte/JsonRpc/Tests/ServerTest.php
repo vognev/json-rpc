@@ -14,9 +14,9 @@ use Kilte\JsonRpc\Exception\InternalException;
 use Kilte\JsonRpc\Exception\MethodNotFoundException;
 use Kilte\JsonRpc\Exception\ParseException;
 use Kilte\JsonRpc\Request\IOStreamFactory;
+use Kilte\JsonRpc\Response\HttpResponse;
 use Kilte\JsonRpc\Response\Json\ErrorResponse;
 use Kilte\JsonRpc\Response\Json\SuccessResponse;
-use Kilte\JsonRpc\Response\ResponseFactory;
 use Kilte\JsonRpc\Server;
 
 /**
@@ -30,7 +30,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     /**
      * Returns server instance
      *
-     * @param array|object $app User application
+     * @param array|object $app    User application
+     * @param mixed        $stream Stream
      *
      * @return Server
      */
@@ -39,10 +40,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $app = new Application($app);
         $requestFactory = new IOStreamFactory();
         $requestFactory->setStream($stream);
-        $responseFactory = new ResponseFactory();
-        $responseFactory->add('http', '\\Kilte\\JsonRpc\\Response\\HttpResponse');
 
-        return new Server($app, $requestFactory, $responseFactory, 'http');
+        return new Server($app, $requestFactory, new HttpResponse());
     }
 
     /**

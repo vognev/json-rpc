@@ -13,12 +13,9 @@ use Acme\UserApplication;
 use Kilte\JsonRpc\Application;
 use Kilte\JsonRpc\Server;
 use Kilte\JsonRpc\Request\IOStreamFactory;
-use Kilte\JsonRpc\Response\ResponseFactory;
+use Kilte\JsonRpc\Response\HttpResponse;
 
-$app = new Application(new UserApplication());
-$responseFactory = new ResponseFactory();
-$responseFactory->add('http', '\\Kilte\\JsonRpc\\Response\\HttpResponse');
-$server = new Server($app, new IOStreamFactory(), $responseFactory, 'http');
+$server = new Server(new Application(new UserApplication()), new IOStreamFactory(), new HttpResponse());
 $server->handle();
 ```
 

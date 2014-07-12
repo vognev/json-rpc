@@ -4,7 +4,7 @@ namespace Kilte\JsonRpc\Tests;
 
 use Kilte\JsonRpc\Application;
 use Kilte\JsonRpc\Request\IOStreamFactory;
-use Kilte\JsonRpc\Response\ResponseFactory;
+use Kilte\JsonRpc\Response\HttpResponse;
 use Kilte\JsonRpc\Server;
 
 /**
@@ -41,9 +41,8 @@ class SpecificationTest extends \PHPUnit_Framework_TestCase
             return ['hello', 5];
         };
         $ioStream = new IOStreamFactory();
-        $response = new ResponseFactory();
-        $response->add('http', '\\Kilte\\JsonRpc\\Response\\HttpResponse');
-        $server = new Server(new Application($app), $ioStream, $response, 'http');
+        $response = new HttpResponse();
+        $server = new Server(new Application($app), $ioStream, $response);
         $streamPath = __DIR__ . '/Fixtures/Specification/%s';
         $invalidRequest = [
             'jsonrpc' => '2.0',
