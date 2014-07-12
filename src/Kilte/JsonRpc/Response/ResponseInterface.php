@@ -20,8 +20,10 @@ interface ResponseInterface
     /**
      * Sends a response
      *
+     * @param string $output JSON
+     *
      * @return void
      */
-    public function send();
+    public function send($output);
 
 }

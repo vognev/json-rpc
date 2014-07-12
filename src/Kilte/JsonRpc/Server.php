@@ -14,6 +14,7 @@ use Kilte\JsonRpc\Exception\JsonRpcException;
 use Kilte\JsonRpc\Exception\MethodNotFoundException;
 use Kilte\JsonRpc\Request\AbstractFactory;
 use Kilte\JsonRpc\Request\Request;
+use Kilte\JsonRpc\Response\Json\AbstractResponse;
 use Kilte\JsonRpc\Response\Json\ErrorResponse;
 use Kilte\JsonRpc\Response\Json\SuccessResponse;
 use Kilte\JsonRpc\Response\ResponseFactory;
@@ -75,6 +76,7 @@ class Server
      */
     public function handle()
     {
+        /** @var $responses AbstractResponse[] */
         $responses = [];
         try {
             $result = $this->requestFactory->forge();
@@ -109,7 +111,18 @@ class Server
             }
         }
         if (!empty($responses) && isset($isBatch)) {
-            $this->responseFactory->create($this->responseType, [$responses, $isBatch])->send();
+            if (sizeof($responses) == 1 && $isBatch === false) {
+                $output = $responses[0]->jsonify();
+            } else {
+                $responses = array_map(
+                    function (AbstractResponse $response) {
+                        return $response->jsonify();
+                    },
+                    $responses
+                );
+                $output = sprintf('[%s]', implode(',', $responses));
+            }
+            $this->responseFactory->create($this->responseType)->send($output);
         }
     }
 
