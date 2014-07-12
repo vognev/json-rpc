@@ -47,7 +47,7 @@ abstract class AbstractFactory
         if (array_key_exists('params', $request) && !is_array($request['params'])) {
             $isValid = false;
         }
-        if ($request['jsonrpc'] !== Request::JSONRPC) {
+        if (isset($request['jsonrpc']) && $request['jsonrpc'] !== Request::JSONRPC) {
             $isValid = false;
         }
 
