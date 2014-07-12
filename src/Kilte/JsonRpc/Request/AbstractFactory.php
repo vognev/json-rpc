@@ -44,7 +44,7 @@ abstract class AbstractFactory
                 $isValid = false;
             }
         }
-        if (isset($request->params) && !is_array($request->params)) {
+        if (isset($request->params) && (!is_array($request->params) && !$request->params instanceof \StdClass)) {
             $isValid = false;
         }
         if (isset($request->jsonrpc) && $request->jsonrpc !== Request::JSONRPC) {
@@ -55,26 +55,41 @@ abstract class AbstractFactory
     }
 
     /**
-     * Returns a request instance
+     * Returns requests instances
      *
      * @throws ParseException
      * @throws InvalidRequestException
-     * @return Request
+     * @return array
      */
     public function forge()
     {
-        $request = json_decode($this->getRequest(), false);
-        if (!$request instanceof \StdClass) {
+        $isBatch = false;
+        $requests = json_decode($this->getRequest(), false);
+        if ($requests instanceof \StdClass) {
+            $requests = [$requests];
+        } elseif (!is_array($requests)) {
             throw new ParseException();
+        } else {
+            $isBatch = true;
         }
-        if (!$this->validateRequest($request)) {
+        if (empty($requests)) {
             throw new InvalidRequestException();
         }
-        foreach (['id' => false, 'params' => []] as $notRequired => $value) {
-            $request->$notRequired = isset($request->$notRequired) ? $request->$notRequired : $value;
+        $result = [];
+        foreach ($requests as $request) {
+            if (!$request instanceof \StdClass) {
+                $result[] = new InvalidRequestException();
+            } elseif (!$this->validateRequest($request)) {
+                $result[] = new InvalidRequestException();
+            } else {
+                foreach (['id' => false, 'params' => []] as $notRequired => $value) {
+                    $request->$notRequired = isset($request->$notRequired) ? $request->$notRequired : $value;
+                }
+                $result[] = new Request($request->method, (array) $request->params, $request->id);
+            }
         }
 
-        return new Request($request->method, $request->params, $request->id);
+        return [$result, $isBatch];
     }
 
 }

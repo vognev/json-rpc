@@ -13,6 +13,7 @@ use Kilte\JsonRpc\Exception\InternalException;
 use Kilte\JsonRpc\Exception\JsonRpcException;
 use Kilte\JsonRpc\Exception\MethodNotFoundException;
 use Kilte\JsonRpc\Request\AbstractFactory;
+use Kilte\JsonRpc\Request\Request;
 use Kilte\JsonRpc\Response\Json\ErrorResponse;
 use Kilte\JsonRpc\Response\Json\SuccessResponse;
 use Kilte\JsonRpc\Response\ResponseFactory;
@@ -74,31 +75,41 @@ class Server
      */
     public function handle()
     {
+        $responses = [];
         try {
-            $request = $this->requestFactory->forge();
+            $result = $this->requestFactory->forge();
+            $requests = $result[0];
+            $isBatch = $result[1];
         } catch (JsonRpcException $e) {
-            $response = new ErrorResponse(null, $e);
+            $responses[] = new ErrorResponse(null, $e);
+            $isBatch = false;
         }
-        if (isset($request)) {
-            try {
-                try {
-                    $result = call_user_func_array([$this->app, $request->getMethod()], $request->getParams());
-                    if ($request->getId() !== false) {
-                        $response = new SuccessResponse($request->getId(), $result);
+        if (isset($requests)) {
+            foreach ($requests as $request) {
+                if ($request instanceof Request) {
+                    try {
+                        try {
+                            $result = call_user_func_array([$this->app, $request->getMethod()], $request->getParams());
+                            if ($request->getId() !== false) {
+                                $responses[] = new SuccessResponse($request->getId(), $result);
+                            }
+                        } catch (\BadMethodCallException $e) {
+                            throw new MethodNotFoundException($e->getMessage());
+                        } catch (JsonRpcException $e) {
+                            throw $e;
+                        } catch (\Exception $e) {
+                            throw new InternalException($e->getMessage());
+                        }
+                    } catch (JsonRpcException $e) {
+                        $responses[] = new ErrorResponse($request->getId(), $e);
                     }
-                } catch (\BadMethodCallException $e) {
-                    throw new MethodNotFoundException($e->getMessage());
-                } catch (JsonRpcException $e) {
-                    throw $e;
-                } catch (\Exception $e) {
-                    throw new InternalException($e->getMessage());
+                } else {
+                    $responses[] = new ErrorResponse(null, $request);
                 }
-            } catch (JsonRpcException $e) {
-                $response = new ErrorResponse($request->getId(), $e);
             }
         }
-        if (isset($response)) {
-            $this->responseFactory->create($this->responseType, [$response])->send();
+        if (!empty($responses) && isset($isBatch)) {
+            $this->responseFactory->create($this->responseType, [$responses, $isBatch])->send();
         }
     }
 

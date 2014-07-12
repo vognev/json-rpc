@@ -24,7 +24,7 @@ class IOStreamFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $factory = new IOStreamFactory();
         $factory->setStream(__DIR__ . '/../Fixtures/stream.json');
-        $this->assertEquals($factory->forge(), new Request('method', ['arg'], 'id'));
+        $this->assertEquals($factory->forge(), [[new Request('method', ['arg'], 'id')], false]);
     }
 
 }

@@ -19,16 +19,27 @@ use Kilte\JsonRpc\Response\Json\AbstractResponse;
 class HttpResponse implements ResponseInterface
 {
     /**
-     * @var AbstractResponse
+     * @var AbstractResponse[] Responses
      */
-    private $response;
+    private $responses;
 
     /**
-     * @param AbstractResponse $response
+     * @var boolean Is batch?
      */
-    public function __construct(AbstractResponse $response)
+    private $isBatch;
+
+    /**
+     * Constructor
+     *
+     * @param AbstractResponse[] $responses Responses
+     * @param boolean            $isBatch   Is batch?
+     *
+     * @return self
+     */
+    public function __construct(array $responses, $isBatch = false)
     {
-        $this->response = $response;
+        $this->responses = $responses;
+        $this->isBatch = $isBatch;
     }
 
     /**
@@ -37,7 +48,23 @@ class HttpResponse implements ResponseInterface
     public function send()
     {
         header('Content-Type: application/json', true);
-        echo $this->response->jsonify();
+        if (sizeof($this->responses) == 1 && $this->isBatch === false) {
+            $output = $this->responses[0]->jsonify();
+        } else {
+            $output = sprintf(
+                '[%s]',
+                implode(
+                    ',',
+                    array_map(
+                        function (AbstractResponse $response) {
+                            return $response->jsonify();
+                        },
+                        $this->responses
+                    )
+                )
+            );
+        }
+        echo $output;
     }
 
 }

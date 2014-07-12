@@ -9,6 +9,7 @@
 
 namespace Kilte\JsonRpc\Tests\Request;
 
+use Kilte\JsonRpc\Exception\InvalidRequestException;
 use Kilte\JsonRpc\Request\Request;
 
 /**
@@ -40,7 +41,7 @@ class AbstractFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request('method', ['param'], 'id');
         $factory = $this->getFactory((string) $request);
-        $this->assertEquals($factory->forge(), $request);
+        $this->assertEquals($factory->forge(), [[$request], false]);
     }
 
     public function testForgeFailedWithParseException()
@@ -57,12 +58,7 @@ class AbstractFactoryTest extends \PHPUnit_Framework_TestCase
     public function testForgeFailedWithInvalidRequestException()
     {
         $factory = $this->getFactory(json_encode(['params' => 'could not be string', 'jsonrpc' => 'invalid_version']));
-        $this->setExpectedException(
-            '\\Kilte\\JsonRpc\\Exception\\InvalidRequestException',
-            'The JSON sent is not a valid Request object.',
-            -32600
-        );
-        $factory->forge();
+        $this->assertEquals([[new InvalidRequestException()], false], $factory->forge());
     }
 
 }

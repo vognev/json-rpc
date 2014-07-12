@@ -27,7 +27,7 @@ class HttpResponseTest extends \PHPUnit_Framework_TestCase
     {
         $response = new SuccessResponse('id', 'result');
         ob_start();
-        (new HttpResponse($response))->send();
+        (new HttpResponse([$response]))->send();
         $actual = ob_get_clean();
         $this->assertEquals($response->jsonify(),$actual);
     }
