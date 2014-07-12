@@ -24,8 +24,6 @@ $server->handle();
 
 ## TODO
 
-- RPC call Batch
-- Test that we conform specification
 - Documentation
 
 ## LICENSE
