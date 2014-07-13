@@ -1,7 +1,7 @@
 {
     "name": "kilte/json-rpc",
     "keywords": ["json-rpc"],
-    "description": "Implementation of the JSON-RPC 2.0 protocol in PHP ",
+    "description": "Server side implementation of the JSON-RPC 2.0 protocol in PHP",
     "license": "MIT",
     "authors": [
         {
