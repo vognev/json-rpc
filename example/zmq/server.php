@@ -1,14 +1,20 @@
 <?php
 use Kilte\JsonRpc\Application;
 use Kilte\JsonRpc\Request\AbstractFactory;
-use Kilte\JsonRpc\Response\ResponseInterface;
 use Kilte\JsonRpc\Server;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
+/**
+ * Class JsonRpcApplication
+ */
 class JsonRpcApplication
 {
 
+    /**
+     * @param $name
+     * @return string
+     */
     public function greet($name)
     {
         return sprintf('Hello, %s', $name);
@@ -16,11 +22,17 @@ class JsonRpcApplication
 
 }
 
+/**
+ * Class ZMQRequestFactory
+ */
 class ZMQRequestFactory extends AbstractFactory
 {
 
     private $responder;
 
+    /**
+     * @param ZMQSocket $responder
+     */
     public function __construct(ZMQSocket $responder)
     {
         $this->responder = $responder;
@@ -36,16 +48,25 @@ class ZMQRequestFactory extends AbstractFactory
 
 }
 
-class ZMQResponse implements ResponseInterface
+/**
+ * Class ZMQResponse
+ */
+class ZMQResponse
 {
 
     private $responder;
 
+    /**
+     * @param ZMQSocket $responder
+     */
     public function __construct(ZMQSocket $responder)
     {
         $this->responder = $responder;
     }
 
+    /**
+     * @param $output
+     */
     public function send($output)
     {
         $this->responder->send($output);
@@ -56,18 +77,13 @@ class ZMQResponse implements ResponseInterface
 $context = new ZMQContext();
 $responder = new ZMQSocket($context, ZMQ::SOCKET_REP);
 $responder->bind("tcp://127.0.0.1:5555");
+$response = new ZMQResponse($responder);
 
 $server = new Server(
     new Application(new JsonRpcApplication()),
-    new ZMQRequestFactory($responder),
-    new ZMQResponse($responder)
+    new ZMQRequestFactory($responder)
 );
 
 while (true) {
-    try {
-        $server->handle();
-    } catch (ZMQSocketException $e) {
-        // Notification received
-        $responder->send('');
-    }
+    $response->send($server->handle());
 }

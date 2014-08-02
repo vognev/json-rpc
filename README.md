@@ -17,8 +17,11 @@ use Kilte\JsonRpc\Server;
 use Kilte\JsonRpc\Request\IOStreamFactory;
 use Kilte\JsonRpc\Response\HttpResponse;
 
-$server = new Server(new Application(new UserApplication()), new IOStreamFactory(), new HttpResponse());
-$server->handle();
+$server = new Server(new Application(new UserApplication()), new IOStreamFactory());
+$output = $server->handle();
+if ($output !== null) {
+    (new HttpResponse($output))->send();
+}
 ```
 
 ### Application
@@ -74,32 +77,6 @@ class ZMQRequestFactory extends AbstractFactory
         printf("Received message: %s\n", $request);
 
         return $request;
-    }
-
-}
-```
-
-### ResponseInterface
-
-To allow the server to respond to a request, 
-you need to pass into the constructor of the server a class that implements `Kilte\JsonRpc\Response\ResponseInterface`.
-
-The library provides only `HttpResponse`. But you can also define your own class:
-
-```php
-class ZMQResponse implements ResponseInterface
-{
-
-    private $responder;
-
-    public function __construct(ZMQSocket $responder)
-    {
-        $this->responder = $responder;
-    }
-
-    public function send($output)
-    {
-        $this->responder->send($output);
     }
 
 }

@@ -4,7 +4,6 @@ namespace Kilte\JsonRpc\Tests;
 
 use Kilte\JsonRpc\Application;
 use Kilte\JsonRpc\Request\IOStreamFactory;
-use Kilte\JsonRpc\Response\HttpResponse;
 use Kilte\JsonRpc\Server;
 
 /**
@@ -17,9 +16,6 @@ use Kilte\JsonRpc\Server;
 class SpecificationTest extends \PHPUnit_Framework_TestCase
 {
 
-    /**
-     * @runInSeparateProcess
-     */
     public function testSpecification()
     {
         $app = [];
@@ -41,8 +37,7 @@ class SpecificationTest extends \PHPUnit_Framework_TestCase
             return ['hello', 5];
         };
         $ioStream = new IOStreamFactory();
-        $response = new HttpResponse();
-        $server = new Server(new Application($app), $ioStream, $response);
+        $server = new Server(new Application($app), $ioStream);
         $streamPath = __DIR__ . '/Fixtures/Specification/%s';
         $invalidRequest = [
             'jsonrpc' => '2.0',
@@ -135,11 +130,9 @@ class SpecificationTest extends \PHPUnit_Framework_TestCase
         ];
         foreach ($fixtures as $request => $expectedResponse) {
             $ioStream->setStream(sprintf($streamPath, $request));
-            ob_start();
-            $server->handle();
             $this->assertEquals(
                 !empty($expectedResponse) ? json_encode($expectedResponse) : '',
-                ob_get_clean(),
+                $server->handle(),
                 'Request: ' . file_get_contents(sprintf($streamPath, $request))
             );
         }

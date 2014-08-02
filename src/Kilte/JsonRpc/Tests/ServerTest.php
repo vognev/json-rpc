@@ -14,7 +14,6 @@ use Kilte\JsonRpc\Exception\InternalException;
 use Kilte\JsonRpc\Exception\MethodNotFoundException;
 use Kilte\JsonRpc\Exception\ParseException;
 use Kilte\JsonRpc\Request\IOStreamFactory;
-use Kilte\JsonRpc\Response\HttpResponse;
 use Kilte\JsonRpc\Response\Json\ErrorResponse;
 use Kilte\JsonRpc\Response\Json\SuccessResponse;
 use Kilte\JsonRpc\Server;
@@ -41,12 +40,9 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $requestFactory = new IOStreamFactory();
         $requestFactory->setStream($stream);
 
-        return new Server($app, $requestFactory, new HttpResponse());
+        return new Server($app, $requestFactory);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
     public function testHandle()
     {
         $app = [];
@@ -54,38 +50,23 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             return sprintf('Argument value is %s', $arg);
         };
         $server = $this->makeServer($app, __DIR__ . '/Fixtures/stream.json');
-        ob_start();
-        $server->handle();
-        $actualResponse = ob_get_clean();
         $expectedResponse = (new SuccessResponse('id', 'Argument value is arg'))->jsonify();
-        $this->assertEquals($expectedResponse, $actualResponse);
+        $this->assertEquals($expectedResponse, $server->handle());
     }
 
-    /**
-     * @runInSeparateProcess
-     */
     public function testHandleErrorResponseWhileHandlingRequest()
     {
         $server = $this->makeServer([], __DIR__ . '/Fixtures/invalid_json.txt');
-        ob_start();
-        $server->handle();
-        $actualResponse = ob_get_clean();
         $expectedResponse = (new ErrorResponse(null, new ParseException()))->jsonify();
-        $this->assertEquals($expectedResponse, $actualResponse);
+        $this->assertEquals($expectedResponse, $server->handle());
     }
 
-    /**
-     * @runInSeparateProcess
-     */
     public function testHandleErrorResponseMethodNotFound()
     {
         $server = $this->makeServer([], __DIR__ . '/Fixtures/stream.json');
-        ob_start();
-        $server->handle();
-        $actualResponse = ob_get_clean();
         $e = new MethodNotFoundException("Method \"method\" does not exists");
         $expectedResponse = (new ErrorResponse('id', $e))->jsonify();
-        $this->assertEquals($expectedResponse, $actualResponse);
+        $this->assertEquals($expectedResponse, $server->handle());
     }
 
     /**
@@ -98,16 +79,10 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             throw new InternalException($arg);
         };
         $server = $this->makeServer($app, __DIR__ . '/Fixtures/stream.json');
-        ob_start();
-        $server->handle();
-        $actualResponse = ob_get_clean();
         $expectedResponse = (new ErrorResponse('id', new InternalException('arg')))->jsonify();
-        $this->assertEquals($expectedResponse, $actualResponse);
+        $this->assertEquals($expectedResponse, $server->handle());
     }
 
-    /**
-     * @runInSeparateProcess
-     */
     public function testHandleErrorResponseMethodThrowsAnyException()
     {
         $app = [];
@@ -115,11 +90,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             throw new \Exception($arg);
         };
         $server = $this->makeServer($app, __DIR__ . '/Fixtures/stream.json');
-        ob_start();
-        $server->handle();
-        $actualResponse = ob_get_clean();
         $expectedResponse = (new ErrorResponse('id', new InternalException('arg')))->jsonify();
-        $this->assertEquals($expectedResponse, $actualResponse);
+        $this->assertEquals($expectedResponse, $server->handle());
     }
 
 }

@@ -17,7 +17,6 @@ use Kilte\JsonRpc\Request\Request;
 use Kilte\JsonRpc\Response\Json\AbstractResponse;
 use Kilte\JsonRpc\Response\Json\ErrorResponse;
 use Kilte\JsonRpc\Response\Json\SuccessResponse;
-use Kilte\JsonRpc\Response\ResponseInterface;
 
 /**
  * Class Server
@@ -38,30 +37,23 @@ class Server
     private $requestFactory;
 
     /**
-     * @var ResponseInterface Response
-     */
-    private $response;
-
-    /**
      * Constructor
      *
-     * @param Application       $app            An application instance
-     * @param AbstractFactory   $requestFactory Request factory
-     * @param ResponseInterface $response       Response
+     * @param Application     $app            An application instance
+     * @param AbstractFactory $requestFactory Request factory
      *
      * @return self
      */
-    public function __construct(Application $app, AbstractFactory $requestFactory, ResponseInterface $response)
+    public function __construct(Application $app, AbstractFactory $requestFactory)
     {
         $this->app = $app;
         $this->requestFactory = $requestFactory;
-        $this->response = $response;
     }
 
     /**
-     * Handles a request and sends a response
+     * Handles a request and returns a response
      *
-     * @return void
+     * @return string|null
      */
     public function handle()
     {
@@ -111,8 +103,9 @@ class Server
                 );
                 $output = sprintf('[%s]', implode(',', $responses));
             }
-            $this->response->send($output);
         }
+
+        return isset($output) ? $output : null;
     }
 
 }

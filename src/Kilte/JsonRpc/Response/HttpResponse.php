@@ -14,16 +14,45 @@ namespace Kilte\JsonRpc\Response;
  *
  * @package Kilte\JsonRpc\Response
  */
-class HttpResponse implements ResponseInterface
+class HttpResponse
 {
 
     /**
-     * {@inheritdoc}
+     * @var string Content
      */
-    public function send($output)
+    private $content;
+
+    /**
+     * Constructor
+     *
+     * @param string $content Content
+     *
+     * @return self
+     */
+    public function __construct($content)
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * Returns content
+     *
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
+     * Sends response
+     *
+     * @return void
+     */
+    public function send()
     {
         header('Content-Type: application/json', true);
-        echo $output;
+        echo $this->content;
     }
 
 }

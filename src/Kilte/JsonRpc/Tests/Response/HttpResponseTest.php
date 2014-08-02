@@ -10,7 +10,6 @@
 namespace Kilte\JsonRpc\Tests\Response;
 
 use Kilte\JsonRpc\Response\HttpResponse;
-use Kilte\JsonRpc\Response\Json\SuccessResponse;
 
 /**
  * Class HttpResponseTest
@@ -25,11 +24,17 @@ class HttpResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testSend()
     {
-        $response = new SuccessResponse('id', 'result');
+        $response = 'response content';
         ob_start();
-        (new HttpResponse())->send($response->jsonify());
+        (new HttpResponse($response))->send();
         $actual = ob_get_clean();
-        $this->assertEquals($response->jsonify(),$actual);
+        $this->assertEquals($response,$actual);
+    }
+
+    public function testGetContent()
+    {
+        $response = 'response content';
+        $this->assertEquals($response, (new HttpResponse($response))->getContent());
     }
 
 }
