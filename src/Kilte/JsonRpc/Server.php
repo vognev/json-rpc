@@ -70,21 +70,21 @@ class Server
         if (isset($requests)) {
             foreach ($requests as $request) {
                 if ($request instanceof Request) {
+                    $error = null;
                     try {
-                        try {
-                            $result = call_user_func_array([$this->app, $request->getMethod()], $request->getParams());
-                            if ($request->getId() !== false) {
-                                $responses[] = new SuccessResponse($request->getId(), $result);
-                            }
-                        } catch (\BadMethodCallException $e) {
-                            throw new MethodNotFoundException($e->getMessage());
-                        } catch (JsonRpcException $e) {
-                            throw $e;
-                        } catch (\Exception $e) {
-                            throw new InternalException($e->getMessage());
+                        $result = call_user_func_array([$this->app, $request->getMethod()], $request->getParams());
+                        if ($request->getId() !== false) {
+                            $responses[] = new SuccessResponse($request->getId(), $result);
                         }
+                    } catch (\BadMethodCallException $e) {
+                        $error = new MethodNotFoundException($e->getMessage());
                     } catch (JsonRpcException $e) {
-                        $responses[] = new ErrorResponse($request->getId(), $e);
+                        $error = $e;
+                    } catch (\Exception $e) {
+                        $error = new InternalException($e->getMessage());
+                    }
+                    if ($error !== null) {
+                        $responses[] = new ErrorResponse($request->getId(), $error);
                     }
                 } else {
                     $responses[] = new ErrorResponse(null, $request);
