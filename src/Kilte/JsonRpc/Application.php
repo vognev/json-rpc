@@ -41,8 +41,8 @@ class Application
         }
         if (is_array($app)) {
             foreach ($app as $key => $item) {
-                if (!is_callable($item)) {
-                    throw new \InvalidArgumentException(sprintf('Item "%s" is not callable', $key));
+                if (!is_callable($item) && !is_object($item)) {
+                    throw new \InvalidArgumentException(sprintf('Item "%s" is not callable or object', $key));
                 }
             }
         }
@@ -83,11 +83,24 @@ class Application
     public function __call($name, array $args = [])
     {
         $total = count($args);
-        if (is_array($this->app) && array_key_exists($name, $this->app)) {
-            $method = $this->app[$name];
+        if (is_array($this->app)) {
+            try {
+                list($namespace, $methodName) = $this->parseName($name);
+                if (array_key_exists($namespace, $this->app)) {
+                    $namespace = $this->app[$namespace];
+                    if (is_object($namespace) && method_exists($namespace, $methodName)) {
+                        $method = [$namespace, $methodName];
+                    }
+                }
+            } catch (\InvalidArgumentException $exception) {
+                if (array_key_exists($name, $this->app)) {
+                    $method = $this->app[$name];
+                }
+            }
         } elseif (method_exists($this->app, $name)) {
             $method = [$this->app, $name];
-        } else {
+        }
+        if (!isset($method)) {
             throw new \BadMethodCallException(sprintf('Method "%s" does not exists', $name));
         }
         $r = $this->reflectionFactory($method);
@@ -96,6 +109,28 @@ class Application
         }
 
         return call_user_func_array($method, $args);
+    }
+
+    /**
+     * Returns namespace and method
+     *
+     * @param string $name Name
+     *
+     * @return array [namespace, method]
+     * @throws \InvalidArgumentException
+     */
+    private function parseName($name)
+    {
+        $name = explode('.', $name);
+        if (sizeof($name) < 2) {
+            throw new \InvalidArgumentException('Unexpected name given');
+        }
+        $namespace = array_shift($name);
+        $name = array_map('ucwords', $name);
+        $name[0] = strtolower($name[0]);
+        $method = implode('', $name);
+
+        return [$namespace, $method];
     }
 
 }

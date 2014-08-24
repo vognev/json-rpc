@@ -51,6 +51,13 @@ $userApp1['greet'] = function ($name) {
 $app1 = new Application($userApp1);
 ```
 
+Also you can declare namespaces:
+
+```php
+$app = new Application(['namespace' => new UserApplication()]);
+// Client: {"jsonrpc": "2.0", "method": "namespace.method", "params": [1, 2, 3], "id": 1}
+```
+
 ### RequestFactory
 
 RequestFactory is responsible for creating an instance of the request, 
