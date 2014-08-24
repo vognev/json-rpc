@@ -29,4 +29,14 @@ class UserApplication
         return sprintf('hello, %s', $name);
     }
 
+    /**
+     * dot.separated
+     *
+     * @return string
+     */
+    public function dotSeparated()
+    {
+        return 'dot.separated.response';
+    }
+
 }

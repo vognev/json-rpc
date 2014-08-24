@@ -84,6 +84,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $app = new Application(['namespace' => new UserApplication()]);
         $this->assertEquals(call_user_func([$app, 'namespace.greet'], 'kilte'), 'hello, kilte');
+        $this->assertEquals(call_user_func([$app, 'namespace.dot.separated']), 'dot.separated.response');
     }
 
 }
