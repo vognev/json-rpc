@@ -4,9 +4,11 @@ Server side implementation of the JSON-RPC 2.0 protocol in PHP.
 
 [![Build Status](https://travis-ci.org/Kilte/json-rpc.svg?branch=master)](https://travis-ci.org/Kilte/json-rpc)
 
+
 ## Requirements
 
 - PHP &gt;= 5.4
+
 
 ## Usage
 
@@ -33,6 +35,7 @@ Constructor takes a only one argument, which can be an object of some class, or 
 ```php
 use Kilte\JsonRpc\Application;
 
+// An object
 class UserApplication
 {
 
@@ -44,6 +47,7 @@ class UserApplication
 }
 $app = new Application(new UserApplication());
 
+// An array
 $userApp1 = [];
 $userApp1['greet'] = function ($name) {
     return sprintf('Hello %s!', $name);
@@ -89,6 +93,28 @@ class ZMQRequestFactory extends AbstractFactory
 }
 ```
 
+
+## Tests
+
+```
+$ composer install
+$ vendor/bin/phpunit
+```
+
+## Changelog
+
+### 1.0.0 \[31.08.2014\]
+
+- Removed `\Kilte\JsonRpc\Response\ResponseInterface`
+- `\Kilte\JsonRpc\Server::handle()` method now returns json string or null (if notification received).
+- Improved error handling
+- Added namespaces support
+
+### 0.9.0 \[13.07.2014\]
+
+- First release
+
+
 ## Contributing
 
 - Fork it
@@ -112,6 +138,7 @@ Now you can to remove your branch:
 
     git branch -d awesome-feature
     git push origin :awesome-feature
+
 
 ## LICENSE
 
