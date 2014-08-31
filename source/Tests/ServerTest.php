@@ -1,10 +1,13 @@
 <?php
 
 /**
- * Part of the JsonRpc
+ * Part of the Kilte\JsonRpc
+ *
+ * For the full copyright and license information,
+ * view the LICENSE file that was distributed with this source code.
  *
  * @author  Kilte Leichnam <nwotnbm@gmail.com>
- * @package JsonRpc
+ * @package Kilte\JsonRpc
  */
 
 namespace Kilte\JsonRpc\Tests;
@@ -19,7 +22,7 @@ use Kilte\JsonRpc\Response\Json\SuccessResponse;
 use Kilte\JsonRpc\Server;
 
 /**
- * Class ServerTest
+ * Server Test
  *
  * @package Kilte\JsonRpc\Tests
  */

@@ -1,10 +1,13 @@
 <?php
 
 /**
- * Part of the JsonRpc
+ * Part of the Kilte\JsonRpc
+ *
+ * For the full copyright and license information,
+ * view the LICENSE file that was distributed with this source code.
  *
  * @author  Kilte Leichnam <nwotnbm@gmail.com>
- * @package JsonRpc
+ * @package Kilte\JsonRpc
  */
 
 namespace Kilte\JsonRpc;

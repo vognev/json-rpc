@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Part of the Kilte\JsonRpc
+ *
+ * For the full copyright and license information,
+ * view the LICENSE file that was distributed with this source code.
+ *
+ * @author  Kilte Leichnam <nwotnbm@gmail.com>
+ * @package Kilte\JsonRpc
+ */
+
 namespace Kilte\JsonRpc\Tests;
 
 use Kilte\JsonRpc\Application;
@@ -7,9 +17,9 @@ use Kilte\JsonRpc\Request\IOStreamFactory;
 use Kilte\JsonRpc\Server;
 
 /**
- * Class SpecificationTest
+ * Specification Test
  *
- * Test that we conform specification
+ * Tests that we conform specification
  *
  * @package Kilte\JsonRpc\Tests
  */
