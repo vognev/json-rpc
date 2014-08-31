@@ -6,5 +6,4 @@ $finder = \Symfony\CS\Finder\DefaultFinder::create()
     ->in('source');
 
 return \Symfony\CS\Config\Config::create()
-    ->fixers(['-psr0'])
     ->finder($finder);
