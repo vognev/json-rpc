@@ -3,7 +3,8 @@
 $finder = \Symfony\CS\Finder\DefaultFinder::create()
     ->files()
     ->name('*.php')
-    ->in(__DIR__ . '/src/')
-;
+    ->in('source');
 
-return \Symfony\CS\Config\Config::create()->finder($finder);
+return \Symfony\CS\Config\Config::create()
+    ->fixers(['-psr0'])
+    ->finder($finder);

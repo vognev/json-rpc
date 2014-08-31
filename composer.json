@@ -11,14 +11,14 @@
     ],
     "autoload": {
         "psr-4": {
-            "Kilte\\JsonRpc\\": "src/Kilte/JsonRpc"
+            "Kilte\\JsonRpc\\": "source"
         }
     },
     "require": {
         "php": ">=5.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.1"
+        "phpunit/phpunit": "@stable"
     },
     "extra": {
         "branch-alias": {
