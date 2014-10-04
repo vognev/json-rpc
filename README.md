@@ -93,6 +93,37 @@ class ZMQRequestFactory extends AbstractFactory
 }
 ```
 
+### Middlewares
+
+You can register a callback that will be executed before running an application method. 
+It takes a single argument, which is an instance of the `\\Kilte\\JsonRpc\\Request\\Request` class.
+
+```php
+use Acme\UserApplication;
+use Kilte\JsonRpc\Application;
+use Kilte\JsonRpc\Server;
+use Kilte\JsonRpc\Request\IOStreamFactory;
+use Kilte\JsonRpc\Request\Request;
+use Kilte\JsonRpc\Response\HttpResponse;
+
+$server = new Server(new Application(new UserApplication()), new IOStreamFactory());
+
+$server->before(function (Request $request) {
+    var_dump($request->getMethod());
+});
+
+$server->before(function (Request $request) {
+    if ($request->getMethod() == 'test') {
+        throw new \RuntimeException('Access denied');
+    }
+});
+
+$output = $server->handle();
+if ($output !== null) {
+    (new HttpResponse($output))->send();
+}
+```
+
 
 ## Tests
 
@@ -102,6 +133,10 @@ $ vendor/bin/phpunit
 ```
 
 ## Changelog
+
+### 1.0.1 \[04.10.2014\]
+
+- Added middlewares support
 
 ### 1.0.0 \[31.08.2014\]
 
