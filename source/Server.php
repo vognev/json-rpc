@@ -40,6 +40,11 @@ class Server
     private $requestFactory;
 
     /**
+     * @var callback[] Middlewares
+     */
+    private $middlewares = [];
+
+    /**
      * Constructor
      *
      * @param Application     $app            An application instance
@@ -51,6 +56,23 @@ class Server
     {
         $this->app = $app;
         $this->requestFactory = $requestFactory;
+    }
+
+    /**
+     * Registers middleware
+     *
+     * @param callable $callable Callable
+     *
+     * @return self
+     */
+    public function before($callable)
+    {
+        if (!is_callable($callable)) {
+            throw new \InvalidArgumentException(sprintf('Expects callable, %s given', gettype($callable)));
+        }
+        $this->middlewares[] = $callable;
+
+        return $this;
     }
 
     /**
@@ -75,6 +97,9 @@ class Server
                 if ($request instanceof Request) {
                     $error = null;
                     try {
+                        foreach ($this->middlewares as $callable) {
+                            $callable($request);
+                        }
                         $result = call_user_func_array([$this->app, $request->getMethod()], $request->getParams());
                         if ($request->getId() !== false) {
                             $responses[] = new SuccessResponse($request->getId(), $result);

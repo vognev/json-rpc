@@ -120,6 +120,7 @@ class Application
      * @param string $name Name
      *
      * @return array [namespace, method]
+     *
      * @throws \InvalidArgumentException
      */
     private function parseName($name)

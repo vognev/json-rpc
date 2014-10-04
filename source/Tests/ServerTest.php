@@ -17,6 +17,7 @@ use Kilte\JsonRpc\Exception\InternalException;
 use Kilte\JsonRpc\Exception\MethodNotFoundException;
 use Kilte\JsonRpc\Exception\ParseException;
 use Kilte\JsonRpc\Request\IOStreamFactory;
+use Kilte\JsonRpc\Request\Request;
 use Kilte\JsonRpc\Response\Json\ErrorResponse;
 use Kilte\JsonRpc\Response\Json\SuccessResponse;
 use Kilte\JsonRpc\Server;
@@ -95,6 +96,24 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $server = $this->makeServer($app, __DIR__ . '/Fixtures/stream.json');
         $expectedResponse = (new ErrorResponse('id', new InternalException('arg')))->jsonify();
         $this->assertEquals($expectedResponse, $server->handle());
+    }
+
+    public function testMiddleware()
+    {
+        $app = [];
+        $app['method'] = function ($id) {
+            return 'value_' . $id;
+        };
+        $server = $this->makeServer($app, __DIR__ . '/Fixtures/stream.json');
+        $server->before(
+            function (Request $request) {
+                $this->assertEquals($request->getMethod(), 'method');
+            }
+        );
+        $this->assertEquals((new SuccessResponse('id', 'value_arg'))->jsonify(), $server->handle());
+
+        $this->setExpectedException('\\InvalidArgumentException', 'Expects callable, array given');
+        $server->before([]);
     }
 
 }
