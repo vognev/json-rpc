@@ -107,11 +107,48 @@ class Application
             throw new \BadMethodCallException(sprintf('Method "%s" does not exists', $name));
         }
         $r = $this->reflectionFactory($method);
+
         if ($total < $r->getNumberOfRequiredParameters() || $total > $r->getNumberOfParameters()) {
             throw new InvalidParamsException();
         }
 
-        return call_user_func_array($method, $args);
+        // need higher abstraction here
+        // but I hope there is no way to pass stdClass
+        // using client lib.
+
+        $undefined      = new \stdClass();
+        $calleeParams   = array();
+
+        foreach($r->getParameters() as $parameter) {
+            if ($parameter->isOptional()) {
+                $calleeParams[$parameter->getName()]
+                    = $parameter->getDefaultValue();
+            } else {
+                $calleeParams[$parameter->getName()] = $undefined;
+            }
+        }
+
+        foreach($args as $argkey => $arg) {
+            if (array_key_exists($argkey, $calleeParams)) {
+                $calleeParams[$argkey] = $arg;
+            } elseif (is_numeric($argkey)) {
+                $argkey = (int) $argkey;
+                $arguments = array_keys($calleeParams);
+                if (array_key_exists($argkey, $arguments)) {
+                    $calleeParams[$arguments[$argkey]] = $arg;
+                } else {
+                    throw new InvalidParamsException();
+                }
+            } else {
+                throw new InvalidParamsException();
+            }
+        }
+
+        foreach($calleeParams as &$param)
+            if ($param === $undefined)
+                throw new InvalidParamsException();
+
+        return call_user_func_array($method, $calleeParams);
     }
 
     /**

@@ -90,4 +90,46 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(call_user_func([$app, 'namespace.dot.separated']), 'dot.separated.response');
     }
 
+    public function testParameterOrderAndNaming()
+    {
+        $app = new Application([
+            'test' => function ($req1, $req2, $opt1 = null, $opt2 = null) {
+                return array(
+                    'req1' => $req1, 'req2' => $req2, 'opt1' => $opt1, 'opt2' => $opt2
+                );
+            }
+        ]);
+
+        $this->assertEquals(
+            $app->__call('test', ['req1' => 'req1', 'req2' => 'req2']),
+            ['req1' => 'req1', 'req2' => 'req2', 'opt1' => null, 'opt2' => null]
+        );
+        $this->assertEquals(
+            $app->__call('test', ['req2' => 'req2', 'req1' => 'req1']),
+            ['req1' => 'req1', 'req2' => 'req2', 'opt1' => null, 'opt2' => null]
+        );
+
+        $this->assertEquals(
+            $app->__call('test', [0 => 'req1', 1 => 'req2']),
+            ['req1' => 'req1', 'req2' => 'req2', 'opt1' => null, 'opt2' => null]
+        );
+        $this->assertEquals(
+            $app->__call('test', [1 => 'req2', 0 => 'req1']),
+            ['req1' => 'req1', 'req2' => 'req2', 'opt1' => null, 'opt2' => null]
+        );
+
+        $this->assertEquals(
+            $app->__call('test', ['req1' => 'req1', 'req2' => 'req2', 'opt2' => 'opt2']),
+            ['req1' => 'req1', 'req2' => 'req2', 'opt1' => null, 'opt2' => 'opt2']
+        );
+        $this->assertEquals(
+            $app->__call('test', ['req1' => 'req1', 'req2' => 'req2', 3 => 'opt2']),
+            ['req1' => 'req1', 'req2' => 'req2', 'opt1' => null, 'opt2' => 'opt2']
+        );
+        $this->assertEquals(
+            $app->__call('test', [3 => 'opt2', 'req1' => 'req1', 'req2' => 'req2']),
+            ['req1' => 'req1', 'req2' => 'req2', 'opt1' => null, 'opt2' => 'opt2']
+        );
+    }
+
 }

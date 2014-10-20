@@ -100,7 +100,7 @@ class Server
                         foreach ($this->middlewares as $callable) {
                             $callable($request);
                         }
-                        $result = call_user_func_array([$this->app, $request->getMethod()], $request->getParams());
+                        $result = $this->app->__call($request->getMethod(), $request->getParams());
                         if ($request->getId() !== false) {
                             $responses[] = new SuccessResponse($request->getId(), $result);
                         }
