@@ -49,16 +49,15 @@ class ErrorResponse extends AbstractResponse
      *
      * @param string|int|null  $id   Identifier
      * @param JsonRpcException $e    Exception instance
-     * @param mixed            $data Additional information about the error
      *
      * @return self
      */
-    public function __construct($id, JsonRpcException $e, $data = null)
+    public function __construct($id, JsonRpcException $e)
     {
         $this->id = $id;
         $this->code = $e->getCode();
         $this->message = $e->getMessage();
-        $this->data = $data;
+        $this->data = $e->getData();
     }
 
     /**

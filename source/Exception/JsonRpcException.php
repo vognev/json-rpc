@@ -19,5 +19,17 @@ namespace Kilte\JsonRpc\Exception;
  */
 class JsonRpcException extends \RuntimeException
 {
+    protected $data = null;
 
+    public function __construct($message = null, $data = null)
+    {
+        if (null !== $message)
+            $this->message = $message;
+        $this->data = $data;
+    }
+
+    public function getData()
+    {
+        return $this->data;
+    }
 }

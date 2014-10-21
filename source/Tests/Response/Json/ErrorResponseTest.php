@@ -37,7 +37,7 @@ class ErrorResponseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, (new ErrorResponse(1, new InternalException()))->jsonify());
         $json['error']['data'] = 'additional data';
         $expected = json_encode($json);
-        $this->assertEquals($expected, (new ErrorResponse(1, new InternalException(), 'additional data'))->jsonify());
+        $this->assertEquals($expected, (new ErrorResponse(1, new InternalException(null, 'additional data')))->jsonify());
     }
 
 }
