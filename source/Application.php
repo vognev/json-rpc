@@ -27,7 +27,7 @@ class Application
     /**
      * @var array|object Application
      */
-    private $app;
+    protected $app;
 
     /**
      * Constructor
@@ -61,7 +61,7 @@ class Application
      *
      * @return boolean|\ReflectionFunctionAbstract
      */
-    private function reflectionFactory($method)
+    protected function reflectionFactory($method)
     {
         if (is_array($method) && sizeof($method) == 2) {
             $r = new \ReflectionMethod(get_class($method[0]), $method[1]);
@@ -160,7 +160,7 @@ class Application
      *
      * @throws \InvalidArgumentException
      */
-    private function parseName($name)
+    protected function parseName($name)
     {
         $name = explode('.', $name);
         if (sizeof($name) < 2) {
