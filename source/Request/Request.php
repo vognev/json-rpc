@@ -63,7 +63,7 @@ class Request
      *
      * @return self
      */
-    public function __construct($method, array $params = [], $id = null)
+    public function __construct($method, array $params = array(), $id = null)
     {
         $this->method = $method;
         $this->params = $params;
@@ -78,12 +78,12 @@ class Request
     public function __toString()
     {
         return json_encode(
-            [
+            array(
                 'jsonrpc' => self::JSONRPC,
                 'id'      => $this->id,
                 'method'  => $this->method,
                 'params'  => $this->params
-            ]
+            )
         );
     }
 

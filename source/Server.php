@@ -42,7 +42,7 @@ class Server
     /**
      * @var callback[] Middlewares
      */
-    private $middlewares = [];
+    private $middlewares = array();
 
     /**
      * Constructor
@@ -83,7 +83,7 @@ class Server
     public function handle()
     {
         /** @var $responses AbstractResponse[] */
-        $responses = [];
+        $responses = array();
         try {
             $result = $this->requestFactory->forge();
             $requests = $result[0];

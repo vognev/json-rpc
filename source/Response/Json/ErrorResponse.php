@@ -65,14 +65,14 @@ class ErrorResponse extends AbstractResponse
      */
     public function jsonify()
     {
-        $response = [
+        $response = array(
             'jsonrpc' => self::JSONRPC,
-            'error' => [
+            'error' => array(
                 'code' => $this->code,
                 'message' => $this->message
-            ],
+            ),
             'id' => $this->id
-        ];
+        );
         if ($this->data !== null) {
             $response['error']['data'] = $this->data;
         }

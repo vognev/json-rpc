@@ -42,7 +42,7 @@ abstract class AbstractFactory
     private function validateRequest(\StdClass $request)
     {
         $isValid = true;
-        foreach (['jsonrpc', 'method'] as $required) {
+        foreach (array('jsonrpc', 'method') as $required) {
             if (!isset($request->$required)) {
                 $isValid = false;
             }
@@ -69,7 +69,7 @@ abstract class AbstractFactory
         $isBatch = false;
         $requests = json_decode($this->getRequest(), false);
         if ($requests instanceof \StdClass) {
-            $requests = [$requests];
+            $requests = array($requests);
         } elseif (!is_array($requests)) {
             throw new ParseException();
         } else {
@@ -78,21 +78,21 @@ abstract class AbstractFactory
         if (empty($requests)) {
             throw new InvalidRequestException();
         }
-        $result = [];
+        $result = array();
         foreach ($requests as $request) {
             if (!$request instanceof \StdClass) {
                 $result[] = new InvalidRequestException();
             } elseif (!$this->validateRequest($request)) {
                 $result[] = new InvalidRequestException();
             } else {
-                foreach (['id' => false, 'params' => []] as $notRequired => $value) {
+                foreach (array('id' => false, 'params' => array()) as $notRequired => $value) {
                     $request->$notRequired = isset($request->$notRequired) ? $request->$notRequired : $value;
                 }
                 $result[] = new Request($request->method, (array) $request->params, $request->id);
             }
         }
 
-        return [$result, $isBatch];
+        return array($result, $isBatch);
     }
 
 }

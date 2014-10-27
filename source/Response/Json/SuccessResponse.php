@@ -46,7 +46,7 @@ class SuccessResponse extends AbstractResponse
      */
     public function jsonify()
     {
-        return json_encode(['jsonrpc' => self::JSONRPC, 'result' => $this->result, 'id' => $this->id]);
+        return json_encode(array('jsonrpc' => self::JSONRPC, 'result' => $this->result, 'id' => $this->id));
     }
 
 }

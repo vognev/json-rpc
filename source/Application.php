@@ -83,7 +83,7 @@ class Application
      *
      * @return mixed
      */
-    public function __call($name, array $args = [])
+    public function __call($name, array $args = array())
     {
         $total = count($args);
         if (is_array($this->app)) {
@@ -92,7 +92,7 @@ class Application
                 if (array_key_exists($namespace, $this->app)) {
                     $namespace = $this->app[$namespace];
                     if (is_object($namespace) && method_exists($namespace, $methodName)) {
-                        $method = [$namespace, $methodName];
+                        $method = array($namespace, $methodName);
                     }
                 }
             } catch (\InvalidArgumentException $exception) {
@@ -101,7 +101,7 @@ class Application
                 }
             }
         } elseif (method_exists($this->app, $name)) {
-            $method = [$this->app, $name];
+            $method = array($this->app, $name);
         }
         if (!isset($method)) {
             throw new \BadMethodCallException(sprintf('Method "%s" does not exists', $name));
@@ -171,7 +171,7 @@ class Application
         $name[0] = strtolower($name[0]);
         $method = implode('', $name);
 
-        return [$namespace, $method];
+        return array($namespace, $method);
     }
 
 }
