@@ -67,7 +67,7 @@ abstract class AbstractFactory
     public function forge()
     {
         $isBatch = false;
-        $requests = json_decode($this->getRequest(), false);
+        $requests = json_decode($this->getRequest(), true);
         if ($requests instanceof \StdClass) {
             $requests = array($requests);
         } elseif (!is_array($requests)) {
