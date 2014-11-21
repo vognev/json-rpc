@@ -39,18 +39,18 @@ abstract class AbstractFactory
      *
      * @return boolean
      */
-    private function validateRequest(\StdClass $request)
+    private function validateRequest(array $request)
     {
         $isValid = true;
         foreach (array('jsonrpc', 'method') as $required) {
-            if (!isset($request->$required)) {
+            if (!isset($request[$required])) {
                 $isValid = false;
             }
         }
-        if (isset($request->params) && (!is_array($request->params) && !$request->params instanceof \StdClass)) {
+        if (isset($request['params']) && (!is_array($request['params']))) {
             $isValid = false;
         }
-        if (isset($request->jsonrpc) && $request->jsonrpc !== Request::JSONRPC) {
+        if (isset($request['jsonrpc']) && $request['jsonrpc'] !== Request::JSONRPC) {
             $isValid = false;
         }
 
@@ -80,15 +80,15 @@ abstract class AbstractFactory
         }
         $result = array();
         foreach ($requests as $request) {
-            if (!$request instanceof \StdClass) {
+            if (!is_array($request)) {
                 $result[] = new InvalidRequestException();
             } elseif (!$this->validateRequest($request)) {
                 $result[] = new InvalidRequestException();
             } else {
                 foreach (array('id' => false, 'params' => array()) as $notRequired => $value) {
-                    $request->$notRequired = isset($request->$notRequired) ? $request->$notRequired : $value;
+                    $request[$notRequired] = isset($request[$notRequired]) ? $request[$notRequired] : $value;
                 }
-                $result[] = new Request($request->method, (array) $request->params, $request->id);
+                $result[] = new Request($request['method'], $request['params'], $request['id']);
             }
         }
 
