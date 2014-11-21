@@ -68,7 +68,7 @@ abstract class AbstractFactory
     {
         $isBatch = false;
         $requests = json_decode($this->getRequest(), true);
-        if ($requests instanceof \StdClass) {
+        if (is_array($requests) && isset($requests['jsonrpc'])) {
             $requests = array($requests);
         } elseif (!is_array($requests)) {
             throw new ParseException();
